@@ -105,6 +105,8 @@ class MusikovSong(object):
 
 
 	def getNotesFromSong(self,trackID=0):
+		print "T", trackID
+		print "PT", len(self.Parts)
 		self.Notes = self.Parts[trackID].flat.elements
 		notes_in_order = []
 
@@ -120,7 +122,7 @@ class MusikovSong(object):
 	def getTracks(self):
 		return len(self.MidiFile.tracks)
 
-	def generateGraph(self):
+	def generateGraph(self,trackID=0):
 		G = pgv.AGraph()
 		G.edge_attr['dir'] = 'forward'
 		G.edge_attr['arrowtype'] = 'normal'
@@ -138,10 +140,30 @@ class MusikovSong(object):
 						ex, val, tb = sys.exc_info()
 						traceback.print_exception(ex, val, tb)
 		G.layout(prog='dot')
-		G.write("./graphs/%s.dot"%self.SongName)
-		G.draw("./graphs/%s.%s"%(self.SongName,self.filext))
+		G.write("./graphs/%s-%s.dot"%(self.SongName,trackID))
+		G.draw("./graphs/%s-%s.%s"%(self.SongName,trackID,self.filext))
 		return 0
 
+	def run(self):
+		for trackID in range(self.getTracks()-1):
+
+			self.getNotesFromSong(trackID)
+			self.getNoteMap()
+			print "Note Mapping"
+			print self.NoteMapping
+			self.generateTransitionCount()
+
+			print "Transition Counts"
+			self.pm(self.TransitionMatrix)
+			self.getTransitionSum()
+			self.getTransitionFrequency()
+			print "Transition Sum", self.TransitionSum
+
+			print "Transition Frequencies"
+			self.pm(self.TransitionFrequencies)
+			self.generateGraph(trackID)
+
+			
 
 
 
@@ -151,25 +173,8 @@ if __name__ == "__main__":
 
 	ms = MusikovSong(fp)
 	ms.loadSong(fp)
-	ms.getNotesFromSong()
-	ms.getNoteMap()
+	ms.run()
 
-	print "Note Mapping"
-	print ms.NoteMapping
+
 	
-
-	ms.generateTransitionCount()
-
-	print "Transition Counts"
-	ms.pm(ms.TransitionMatrix)
-	ms.getTransitionSum()
-	ms.getTransitionFrequency()
-	print "Transition Sum", ms.TransitionSum
-
-	print "Transition Frequencies"
-	ms.pm(ms.TransitionFrequencies)
-	ms.generateGraph()
-
-	print "Tracks"
-	print ms.getTracks()
 
