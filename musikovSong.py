@@ -168,12 +168,22 @@ class MusikovSong(object):
 
 
 if __name__ == "__main__":
-	derezzed = "in/derezzed.midi"
-	fp = sys.argv[1]
+	try:
+		fp = sys.argv[1]
+		ms = MusikovSong(fp)
+		ms.loadSong(fp)
+		ms.run()
+	except IndexError:
+		print "You must specify a midi filename to analyse"
+		sys.exit(-1)
+	except IOError:
+		print "You must specify a valid midi filename to analyse"
+		sys.exit(-1)
+	except:
+		ex, val, tb = sys.exc_info()
+		traceback.print_exception(ex, val, tb)
 
-	ms = MusikovSong(fp)
-	ms.loadSong(fp)
-	ms.run()
+
 
 
 	
