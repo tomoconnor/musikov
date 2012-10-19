@@ -1,0 +1,10 @@
+.archive
+.archive/
+.archive/*
+bin/
+bin
+bin/*
+lib/*
+lib
+lib/
+
