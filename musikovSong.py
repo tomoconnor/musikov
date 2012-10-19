@@ -96,12 +96,16 @@ class MusikovSong(object):
 		self.MidiFile.read()
 		self.MidiFile.close()
 		self.Stream = midi.translate.midiFileToStream(self.MidiFile)
+		self.Parts = []
+		for p in self.Stream.parts:
+			self.Parts.append(p)
+
 		self.Part0 = self.Stream.parts[0]
 		
 
 
-	def getNotesFromSong(self):
-		self.Notes = self.Part0.flat.elements
+	def getNotesFromSong(self,trackID=0):
+		self.Notes = self.Parts[trackID].flat.elements
 		notes_in_order = []
 
 		for note in self.Notes:
@@ -165,4 +169,7 @@ if __name__ == "__main__":
 	print "Transition Frequencies"
 	ms.pm(ms.TransitionFrequencies)
 	ms.generateGraph()
+
+	print "Tracks"
+	print ms.getTracks()
 
