@@ -1,11 +1,18 @@
 from music21 import *
 import os
 import sys
+import traceback
+import pygraphviz as pgv
+
+
 class MusikovSong(object):
-	def __init__(self):
+
+	def __init__(self,SongPath):
+		self.SongName = os.path.basename(SongPath).split('.')[0]
 		#self.TransitionMatrix [x][a]
 		#					   [a][1]
 		#self.NoteMapping {A:0, B:1, C:2} etc
+		self.filext = "png"
 		pass
 
 	def generateMatrix(self):
@@ -21,6 +28,8 @@ class MusikovSong(object):
 			noteMap[x] = y
 			y+=1
 		self.NoteMapping = noteMap
+		self.InverseNoteMapping = dict((v,k) for k, v in self.NoteMapping.iteritems())
+
 		#return noteMap
 
 
@@ -107,12 +116,36 @@ class MusikovSong(object):
 	def getTracks(self):
 		return len(self.MidiFile.tracks)
 
+	def generateGraph(self):
+		G = pgv.AGraph()
+		G.edge_attr['dir'] = 'forward'
+		G.edge_attr['arrowtype'] = 'normal'
+		for x in range(len(self.TransitionFrequencies)):
+				for y in range(len(self.TransitionFrequencies[x])):
+					try:
+						if self.TransitionFrequencies[x][y] != 0.0:
+							noteA = self.InverseNoteMapping[x] #reverse the mapping, to get the notes
+							noteB = self.InverseNoteMapping[y]
+							print "%s -> %s (%s)" %(noteA,noteB,self.TransitionFrequencies[x][y])
+							G.add_node(noteA)
+							G.add_node(noteB)
+							G.add_edge(noteA,noteB,label="%0.4f"%self.TransitionFrequencies[x][y])
+					except:
+						ex, val, tb = sys.exc_info()
+						traceback.print_exception(ex, val, tb)
+		G.layout(prog='dot')
+		G.write("./graphs/%s.dot"%self.SongName)
+		G.draw("./graphs/%s.%s"%(self.SongName,self.filext))
+		return 0
+
+
+
 
 if __name__ == "__main__":
 	derezzed = "in/derezzed.midi"
 	fp = sys.argv[1]
 
-	ms = MusikovSong()
+	ms = MusikovSong(fp)
 	ms.loadSong(fp)
 	ms.getNotesFromSong()
 	ms.getNoteMap()
@@ -131,4 +164,5 @@ if __name__ == "__main__":
 
 	print "Transition Frequencies"
 	ms.pm(ms.TransitionFrequencies)
+	ms.generateGraph()
 
