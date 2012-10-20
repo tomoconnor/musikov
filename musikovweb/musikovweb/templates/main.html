@@ -1,3 +1,4 @@
+{% load mytags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -71,9 +72,9 @@
             
 
             <p class="lead">{{chain.fileName}}</p>
-            <p><a href="{{chain.pngFile}}">PNG Graph</a></p>
-            <p><a href="{{chain.svgFile}}">SVG Graph</a></p>
-            <p><a href="{{chain.dotFile}}">dotFile</a></p>
+            <p><a href="{{MEDIA_URL}}graphs/{{chain.pngFile|basename}}">PNG Graph</a></p>
+            <p><a href="{{MEDIA_URL}}graphs/{{chain.svgFile|basename}}">SVG Graph</a></p>
+            <p><a href="{{MEDIA_URL}}graphs/{{chain.dotFile|basename}}">dotFile</a></p>
           </li>
           <li class="divider"></li>
         {% endfor %}
