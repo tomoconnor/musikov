@@ -144,6 +144,22 @@ class MusikovSong(object):
 		G.draw("./graphs/%s-%s.%s"%(self.SongName,trackID,self.filext))
 		return 0
 
+	@staticmethod
+	def grabColumn(matrix, i):
+		return [row[i] for row in matrix]
+
+	def checkMatrix(self):
+		rowSum = 0
+		colSum = 0
+		for x in range(len(self.TransitionFrequencies)):
+			rowSum += sum(self.TransitionFrequencies[x])
+			colSum += sum(self.grabColumn(self.TransitionFrequencies,x))
+			#print rowSum, colSum
+		if rowSum == 1 and colSum == 1:
+			return True
+		else:
+			return False
+				
 	def run(self):
 		for trackID in range(self.getTracks()-1):
 
@@ -162,6 +178,11 @@ class MusikovSong(object):
 			print "Transition Frequencies"
 			self.pm(self.TransitionFrequencies)
 			self.generateGraph(trackID)
+			if self.checkMatrix():
+				print "Matrix is Valid"
+			else:
+				print "Somehow, the row/column totals are >1."
+			
 
 			
 
