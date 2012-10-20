@@ -6,10 +6,23 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from musikovweb.models import *
+from musikovweb.forms import *
+
 
 def index(request):
-	mf = MidiChain.objects.order_by('-rank','-pk')
-	return render_to_response('main.html',{'chains':mf},context_instance=RequestContext(request))
+	if request.method == 'POST':
+		form = UploadForm(request.POST, request.FILES)
+		if form.is_valid():
+			newfile = UploadedFile(uploadfile = request.FILES[u'userFile'])
+			newfile.save()
+
+			# Redirect to the document list after POST
+			return HttpResponseRedirect(reverse('musikovweb.views.index'))
+	else:
+		form = UploadForm() # A empty, unbound form
+		mf = MidiChain.objects.order_by('-rank','-pk')
+		return render_to_response('main.html',{'chains':mf,'form':form},context_instance=RequestContext(request))
+
 
 def vote(request,direction,chainID):
 	mf = MidiChain.objects.get(id=chainID)

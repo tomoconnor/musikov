@@ -84,13 +84,18 @@
         <div class="span4">
           <h2>Sidebar</h2>
           <p> Upload a midi file to generate a graph
-            <form>
 
-              <span class="btn btn-file btn-primary"><input type="file" /></span>
-              <!-- <input class="span2" type="text" placeholder="Email">
-              <input class="span2" type="password" placeholder="Password">
-              <button type="submit" class="btn">Sign in</button> -->
-            </form></p>
+            <form action="/" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p>{{ form.non_field_errors }}</p>
+                        <p>{{ form.label_tag }} {{ form.help_text }}</p>
+                        <p>
+                            {{ form.errors }}
+                            {{ form }}
+                        </p>
+                        <p><input type="submit" value="Upload" /></p>
+            </form>
+          </p>
             <p>
               Alternatively, paste an URL to a midi file.
               <form>
@@ -105,6 +110,7 @@
       </div>
 
       <hr>
+      <pre>{{form}}</pre>
 
       <footer>
         <p>&copy; <a href="http://astoundwireless.com"> Astound Wireless Ltd </a>2012</p>

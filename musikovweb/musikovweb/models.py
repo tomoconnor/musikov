@@ -18,3 +18,6 @@ class MidiChain(models.Model):
 			return self.fileName
 	def get_rank(self):
 			return (self.rank - 100)
+
+class UploadedFile(models.Model):
+	uploadfile = models.FileField(upload_to='uploads/%Y/%m/%d')
