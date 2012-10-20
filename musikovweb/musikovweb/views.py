@@ -24,11 +24,11 @@ def index(request):
 		return render_to_response('main.html',{'chains':mf,'form':form},context_instance=RequestContext(request))
 
 
-def vote(request,direction,chainID):
-	mf = MidiChain.objects.get(id=chainID)
+def vote(request,dir,id):
+	mf = MidiChain.objects.get(id=id)
 	if dir == "up":
-		x.rank += 1
+		mf.rank += 1
 	else:
-		x.rank -= 1
-	x.save()
-	return HttpResponseRedirect('/?refresh=' + str(int(time.time())) + "#" + chainID )
+		mf.rank -= 1
+	mf.save()
+	return HttpResponseRedirect('/?refresh=' + str(int(time.time())) + "#" + id )
