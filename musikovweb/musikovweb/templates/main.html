@@ -59,7 +59,7 @@
       <!-- Example row of columns -->
       <div class="row">
         <div class="span8">
-          <h2>List</h2>
+          <h2>Pre-generated Chains</h2>
           <ul class="nav nav-tabs nav-stacked">
 
         {% for chain in chains %}
@@ -82,7 +82,7 @@
 
         </div>
         <div class="span4">
-          <h2>Sidebar</h2>
+          <h2>Generator</h2>
           <p> Upload a midi file to generate a graph
 
             <form action="/" method="post" enctype="multipart/form-data">
@@ -96,21 +96,21 @@
                         <p><input type="submit" value="Upload" /></p>
             </form>
           </p>
-            <p>
+            <!-- <p>
               Alternatively, paste an URL to a midi file.
-              <form>
+              <form action="/urlsubmit" method="post">
 
-              <input class="span3" type="text" placeholder="Url">
+              <input class="span3" name="url" id="id_url" type="text" placeholder="Url">
               <br />
               <button type="submit" class="btn">Submit</button>
             </form></p>
-            </p>
+            </p> -->
        </div>
       
       </div>
 
       <hr>
-      <pre>{{form}}</pre>
+ 
 
       <footer>
         <p>&copy; <a href="http://astoundwireless.com"> Astound Wireless Ltd </a>2012</p>

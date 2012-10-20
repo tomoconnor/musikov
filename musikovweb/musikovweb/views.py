@@ -23,6 +23,12 @@ def index(request):
 		mf = MidiChain.objects.order_by('-rank','-pk')
 		return render_to_response('main.html',{'chains':mf,'form':form},context_instance=RequestContext(request))
 
+def urlsubmit(request):
+	if request.method == 'POST':
+		pass
+		#urllib2 it
+		
+
 
 def vote(request,dir,id):
 	mf = MidiChain.objects.get(id=id)
