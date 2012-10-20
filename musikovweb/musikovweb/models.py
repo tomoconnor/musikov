@@ -15,7 +15,7 @@ class MidiChain(models.Model):
 
 
 	def __str__(self):
-			return self.fileName
+			return self.fileName +"_"+ str(self.id)
 	def get_rank(self):
 			return (self.rank - 100)
 
