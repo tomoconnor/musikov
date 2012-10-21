@@ -108,9 +108,11 @@ class MusikovSong(object):
 
 
 	def getNotesFromSong(self,trackID=0):
-		print "T", trackID
-		print "PT", len(self.Parts)
-		self.Notes = self.Parts[trackID].flat.elements
+		try:
+			self.Notes = self.Parts[trackID].flat.elements
+		except:
+			self.NotesInOrder = []
+			return False
 		notes_in_order = []
 
 		for note in self.Notes:
@@ -135,7 +137,7 @@ class MusikovSong(object):
 						if self.TransitionFrequencies[x][y] != 0.0:
 							noteA = self.InverseNoteMapping[x] #reverse the mapping, to get the notes
 							noteB = self.InverseNoteMapping[y]
-							print "%s -> %s (%s)" %(noteA,noteB,self.TransitionFrequencies[x][y])
+							#print "%s -> %s (%s)" %(noteA,noteB,self.TransitionFrequencies[x][y])
 							G.add_node(noteA)
 							G.add_node(noteB)
 							G.add_edge(noteA,noteB,label="%0.4f"%self.TransitionFrequencies[x][y])
@@ -165,6 +167,7 @@ class MusikovSong(object):
 		if rowSum == 1 and colSum == 1:
 			return True
 		else:
+			self.MatrixSumTuple = (rowSum,colSum)
 			return False
 				
 	def run(self):
@@ -172,46 +175,48 @@ class MusikovSong(object):
 
 			self.getNotesFromSong(trackID)
 			self.getNoteMap()
-			print "Note Mapping"
-			print self.NoteMapping
+			#print "Note Mapping"
+			#print self.NoteMapping
 			self.generateTransitionCount()
 
-			print "Transition Counts"
-			self.pm(self.TransitionMatrix)
+			#print "Transition Counts"
+			#self.pm(self.TransitionMatrix)
 			self.getTransitionSum()
 			self.getTransitionFrequency()
-			print "Transition Sum", self.TransitionSum
+			#print "Transition Sum", self.TransitionSum
 
-			print "Transition Frequencies"
-			self.pm(self.TransitionFrequencies)
+			#print "Transition Frequencies"
+			#self.pm(self.TransitionFrequencies)
 			self.generateGraph(trackID)
 			if self.checkMatrix():
 				print "Matrix is Valid"
 			else:
-				print "Somehow, the row/column totals are >1."
+				print self.MatrixSumTuple
+				#print "Somehow, the row/column totals are >1."
 
 	def run_with_callback(self,callback):
 		for trackID in range(self.getTracks()-1):
 
 			self.getNotesFromSong(trackID)
 			self.getNoteMap()
-			print "Note Mapping"
-			print self.NoteMapping
+			#print "Note Mapping"
+			#print self.NoteMapping
 			self.generateTransitionCount()
 
-			print "Transition Counts"
-			self.pm(self.TransitionMatrix)
+			#print "Transition Counts"
+			#self.pm(self.TransitionMatrix)
 			self.getTransitionSum()
 			self.getTransitionFrequency()
-			print "Transition Sum", self.TransitionSum
+			#print "Transition Sum", self.TransitionSum
 
-			print "Transition Frequencies"
-			self.pm(self.TransitionFrequencies)
+			#print "Transition Frequencies"
+			#self.pm(self.TransitionFrequencies)
 			self.generateGraph(trackID)
 			if self.checkMatrix():
 				print "Matrix is Valid"
 			else:
-				print "Somehow, the row/column totals are >1."
+				print self.MatrixSumTuple
+				#print "Somehow, the row/column totals are >1."
 			callback(self)
 			
 

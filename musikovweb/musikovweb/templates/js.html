@@ -49,42 +49,31 @@
     </div>
 
     <div class="container">
-
-      <!-- Main hero unit for a primary marketing message or call to action -->
-<!--       <div class="hero-unit">
-        <h1>Hello, world!</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-      </div> -->
-
-      <!-- Example row of columns -->
       <div class="row">
         <div class="span8">
-          <h2>Pre-generated Chains</h2>
-          <ul class="nav nav-tabs nav-stacked" id="pregen">
-
-
-
-<!-- {% for chain in chains %}
-          <li class="well" id="{{chain.id}}">
-            <div class="btn-group btn-group-vertical">
-              <a class="btn-success btn" href="/vote/up/{{chain.id}}"><i class="icon-arrow-up"></i></a>
-              <a class="btn-danger btn" href="/vote/down/{{chain.id}}"><i class="icon-arrow-down"></i></a>
-            </div>
+          <div id="alertspace"></div>
             
+          
+          <h2>Pre-generated Chains</h2>
+          <div class="pagination">
+            <ul>
+              <li><a>Page Select</a></li>
+              {% for page in page_list %}
+              <li><a href="#" onClick="pageList({{page}});">{{page}}</a></li>
+              {% endfor %}
 
-            <p class="lead">{{chain}}</p>
-            <p><a href="{{MEDIA_URL}}graphs/{{chain.pngFile|basename}}">PNG Graph</a></p>
-            <p><a href="{{MEDIA_URL}}graphs/{{chain.svgFile|basename}}">SVG Graph</a></p>
-            <p><a href="{{MEDIA_URL}}graphs/{{chain.dotFile|basename}}">dotFile</a></p>
-          </li>
-          <li class="divider"></li>
-        {% endfor %}  -->
+              <li><a>Current Page</a></li>
+            </ul>
+          </div>
+          <ul class="nav nav-tabs nav-stacked" id="pregen">
   
         </ul>
 
         </div>
         <div class="span4">
+          
+
+
           <h2>Generator</h2>
           <p> Upload a midi file to generate a graph
 
@@ -169,16 +158,31 @@
           </li>
           <li class="divider"></li>
 </script>
-{% endverbatim %}
-<script type="text/javascript">
 
-
+<script id="alertTemplate" type="text/x-jsrender">
+<div class="alert alert-block alert-error fade in" id="alert-{{>alertID}}">
+  <button type="button" class="close" data-dismiss="alert" onClick="$('#alert-{{>alertID}}').remove();">&times;</button>
+  <h4 class="alert-heading">{{>alertHeading}}</h4>
+  <p>{{>alertMessage}}</p>
+ </div>
 </script>
-
+{% endverbatim %}
 <script>
+
+  $.templates(  {
+    chainTemplate: "#chainTemplate", 
+    alertTemplate: "#alertTemplate" }  );
+
+function generateAlert(id, heading,message){
+
+    var alertHTML = $.render.alertTemplate({alertID:id, alertHeading:heading, alertMessage:message});
+    $("#alertspace").append(alertHTML);
+
+}
+
 function renderList() {
   $("#pregen").empty();
-  $.templates({ chainTemplate: "#chainTemplate" });
+  // $.templates({ chainTemplate: "#chainTemplate" });
   $.getJSON("http://localhost:8000/api/midichain/?format=json",
 
     function(data) {
@@ -188,11 +192,32 @@ function renderList() {
         $("#pregen").append(html);
        // $( "#chainTemplate" ).render( item ).appendTo("#pregen");
         // $("<img/>").attr("src", item.media.m).appendTo("#images");
-        if ( i == 3 ) return false;
+        //if ( i == 3 ) return false;
       });
     });
 
 };
+
+function pageList(loadPage) {
+  $("#pregen").empty();
+  var offset = loadPage * 20;
+  var limit = {{PAGINATION_LIMIT}};
+  // $.templates({ chainTemplate: "#chainTemplate" });
+  $.getJSON("http://localhost:8000/api/midichain/?format=json&offset="+offset+"&limit="+limit,
+
+    function(data) {
+      $.each(data.objects, function(i,item){
+        var html = $.render.chainTemplate( item );
+
+        $("#pregen").append(html);
+       // $( "#chainTemplate" ).render( item ).appendTo("#pregen");
+        // $("<img/>").attr("src", item.media.m).appendTo("#images");
+        //if ( i == 3 ) return false;
+      });
+    });
+
+};
+
 $(document).ready(renderList());
 
 
@@ -202,13 +227,15 @@ $(document).ready(renderList());
 
       channel_queue.bind('queue_added', function(data) {
 
-        alert('An event was triggered with message: ' + data.message);
+        generateAlert('Pusher', "an item was added to the queue");
 
       });
 
       list_queue.bind('list_added', function(data) {
+        generateAlert('Pusher', "an item was added to the list");
 
-        alert('An event was triggered with message: ' + data.message);
+
+       // alert('An event was triggered with message: ' + data.message);
         renderList();
 
       });

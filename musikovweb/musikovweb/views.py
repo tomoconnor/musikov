@@ -9,23 +9,26 @@ from django.core.urlresolvers import reverse
 
 from musikovweb.models import *
 from musikovweb.forms import *
+from musikovweb.settings import PUSHER_KEY,PUSHER_SECRET,PUSHER_APP_ID,PAGINATION_LIMIT
 
 from musikovweb.musikov_class import MusikovSong
 import logging
 
+import pusher
 
 from celery import task
-from celerytest.tasks import add
 from celery.signals import task_sent
 
 
 logger = logging.getLogger(__name__)
 
+pusher = pusher.Pusher(app_id=PUSHER_APP_ID, key=PUSHER_KEY, secret=PUSHER_SECRET)
 
 @task_sent.connect
 def task_sent_handler(sender=None, task_id=None, task=None, args=None,
-                      kwargs=None, \*\*kwds):
+                      kwargs=None, **kwds):
     print('Got signal task_sent for task id %s' % (task_id, ))
+    pusher['queue_updates'].trigger('queue_added', {'task_id': task_id})
 
 
 @task()
@@ -52,6 +55,7 @@ def process(upload_id):
 	ms = MusikovSong(ufp)
 	ms.loadSong(ufp)
 	ms.run_with_callback(cb)
+	pusher['list_updates'].trigger('list_added',{})
 	#except:
 	#	ex, val, tb = sys.exc_info()
 	#	logger.error(traceback.format_exception(ex, val, tb))
@@ -71,7 +75,10 @@ def index(request):
 	else:
 		form = UploadForm() # A empty, unbound form
 		mf = MidiChain.objects.order_by('-rank','-pk')
-		return render_to_response('js.html',{'chains':mf,'form':form},context_instance=RequestContext(request))
+		num_items = len(mf)
+		num_pages = abs(num_items/PAGINATION_LIMIT)
+		page_list = range(num_pages)
+		return render_to_response('js.html',{'chains':mf,'form':form,'page_list':page_list,"PAGINATION_LIMIT":PAGINATION_LIMIT},context_instance=RequestContext(request))
 
 def api_list(request):
 	mf = MidiChain.objects.order_by('-rank','-pk')

@@ -158,3 +158,12 @@ LOGGING = {
 }
 
 BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+PUSHER_APP_ID = '30038'
+PUSHER_KEY = '4ce3bc725e312e2fcc43'
+PUSHER_SECRET = 'f9da1e8c2a6a1caf6a2f' 
+CELERY_IMPORTS = ("musikovweb.views", )
+CELERY_RESULT_BACKEND = "amqp"
+CELERY_TASK_RESULT_EXPIRES = 300
+PAGINATION_LIMIT=20
+
+
