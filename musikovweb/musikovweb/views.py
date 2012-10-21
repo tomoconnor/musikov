@@ -72,6 +72,10 @@ def index(request):
 			#process(newfile.id)
 			# Redirect to the document list after POST
 			return HttpResponseRedirect(reverse('musikovweb.views.index'))
+		elif (request.FILES is None):
+			return HttpResponseRedirect(reverse('musikovweb.views.index')) 
+		else:
+			return HttpResponseRedirect(reverse('musikovweb.views.index'))
 	else:
 		form = UploadForm() # A empty, unbound form
 		mf = MidiChain.objects.order_by('-rank','-pk')

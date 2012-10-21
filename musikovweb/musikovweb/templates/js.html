@@ -85,20 +85,15 @@
                               {{ form.errors }}
                               {{ form }}
                           </p>
-                          <p><input type="submit" value="Upload" /></p>
+                          <p><input id="uploadbtn" type="submit" value="Upload" /></p>
               </form>
           </p>
         </div>
 
-       <!-- <div class="span4">
+        <div class="span4">
           <h2>Processing Queue</h2>
-          {% for queue_item in queue %}
-          <div class="progress progress-striped active">
-            {{queue_item.name}}
-            <div class="bar" style="width: 40%;"></div>
-          </div>
-          {% endfor %}
-        </div> -->
+	  <div id="queuespace"></div>
+        </div> 
             <!-- <p>
               Alternatively, paste an URL to a midi file.
               <form action="/urlsubmit" method="post">
@@ -145,8 +140,9 @@
 <script id="chainTemplate" type="text/x-jsrender">
           <li class="well" id="{{>id}}">
             <div class="btn-group btn-group-vertical">
-              <a class="btn-success btn" href="#" onClick="$.ajax({ type: "GET", url: "t/vote/up/{{>id}}"});"><i class="icon-arrow-up"></i></a>
-              <a class="btn-danger btn" href="#" onClick="$.ajax({ type: "GET", url: "t/vote/down/{{>id}}"});"><i class="icon-arrow-down"></i></a>
+              <a class="btn-success btn" href="#" onClick="$.ajax({ type: 'GET', url: '/vote/up/{{>id}}'}).done(function(){renderList();});;"><i class="icon-arrow-up"></i></a>
+	      <a class="btn-info btn">{{>rank}}</a>
+              <a class="btn-danger btn" href="#" onClick="$.ajax({ type: 'GET', url: '/vote/down/{{>id}}'}).done(function(){renderList();});;"><i class="icon-arrow-down"></i></a>
             </div>
             
 
@@ -166,12 +162,21 @@
   <p>{{>alertMessage}}</p>
  </div>
 </script>
+
+
+<script id="queueTemplate" type="text/x-jsrender">
+<div class="progress progress-striped active">
+            {{>queue_name}}
+            <div class="bar" style="width: 50%;"></div>
+          </div>
+</script>
 {% endverbatim %}
 <script>
 
   $.templates(  {
     chainTemplate: "#chainTemplate", 
-    alertTemplate: "#alertTemplate" }  );
+    alertTemplate: "#alertTemplate",
+    queueTemplate: "#queueTemplate" }  );
 
 function generateAlert(id, heading,message){
 
@@ -182,7 +187,6 @@ function generateAlert(id, heading,message){
 
 function renderList() {
   $("#pregen").empty();
-  // $.templates({ chainTemplate: "#chainTemplate" });
   $.getJSON("http://musikov.twinhelix.org/api/midichain/?format=json",
 
     function(data) {
@@ -190,9 +194,6 @@ function renderList() {
         var html = $.render.chainTemplate( item );
 
         $("#pregen").append(html);
-       // $( "#chainTemplate" ).render( item ).appendTo("#pregen");
-        // $("<img/>").attr("src", item.media.m).appendTo("#images");
-        //if ( i == 3 ) return false;
       });
     });
 
@@ -202,7 +203,6 @@ function pageList(loadPage) {
   $("#pregen").empty();
   var offset = loadPage * 20;
   var limit = {{PAGINATION_LIMIT}};
-  // $.templates({ chainTemplate: "#chainTemplate" });
   $.getJSON("http://musikov.twinhelix.org/api/midichain/?format=json&offset="+offset+"&limit="+limit,
 
     function(data) {
@@ -210,9 +210,6 @@ function pageList(loadPage) {
         var html = $.render.chainTemplate( item );
 
         $("#pregen").append(html);
-       // $( "#chainTemplate" ).render( item ).appendTo("#pregen");
-        // $("<img/>").attr("src", item.media.m).appendTo("#images");
-        //if ( i == 3 ) return false;
       });
     });
 
@@ -228,7 +225,8 @@ $(document).ready(renderList());
       channel_queue.bind('queue_added', function(data) {
 
         generateAlert('Processing', "Currently processing a new song.");
-
+	var qhtml = $.render.queueTemplate({'queue_name':data});
+	$("#queuespace").append(qhtml);
       });
 
       list_queue.bind('list_added', function(data) {
@@ -236,7 +234,7 @@ $(document).ready(renderList());
 
 
        // alert('An event was triggered with message: ' + data.message);
-        renderList();
+       renderList();
 
       });
     </script>
@@ -274,36 +272,17 @@ $(document).ready(renderList());
 </script>
 
 <script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-35746917-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
-<script type="text/javascript">
-  var GoSquared = {};
-  GoSquared.acct = "GSN-246179-H";
-  (function(w){
-    function gs(){
-      w._gstc_lt = +new Date;
-      var d = document, g = d.createElement("script");
-      g.type = "text/javascript";
-      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
-      var s = d.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(g, s);
+$('#id_userFile').change(function(){
+    var file = this.files[0];
+    name = file.name;
+    size = file.size;
+    type = file.type;
+    if (type != "audio/midi"){
+	alert("You can only upload MIDI files");
+    	this.files = Array();
     }
-    w.addEventListener ?
-      w.addEventListener("load", gs, false) :
-      w.attachEvent("onload", gs);
-  })(window);
-</script>
+});
 
+</script>
   </body>
 </html>
