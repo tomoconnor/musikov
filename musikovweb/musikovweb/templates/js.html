@@ -151,9 +151,9 @@
             
 
             <p class="lead">{{>fileName}}</p>
-            <p><a href="http://localhost:8000/media/graphs/{{>~basename(pngFile)}}">PNG Graph</a></p>
-            <p><a href="http://localhost:8000/media/graphs/{{>~basename(svgFile)}}">SVG Graph</a></p>
-            <p><a href="http://localhost:8000/media/graphs/{{>~basename(dotFile)}}">dotFile</a></p>
+            <p><a href="http://musikov.twinhelix.org/media/graphs/{{>~basename(pngFile)}}">PNG Graph</a></p>
+            <p><a href="http://musikov.twinhelix.org/media/graphs/{{>~basename(svgFile)}}">SVG Graph</a></p>
+            <p><a href="http://musikov.twinhelix.org/media/graphs/{{>~basename(dotFile)}}">dotFile</a></p>
 
           </li>
           <li class="divider"></li>
@@ -183,7 +183,7 @@ function generateAlert(id, heading,message){
 function renderList() {
   $("#pregen").empty();
   // $.templates({ chainTemplate: "#chainTemplate" });
-  $.getJSON("http://localhost:8000/api/midichain/?format=json",
+  $.getJSON("http://musikov.twinhelix.org/api/midichain/?format=json",
 
     function(data) {
       $.each(data.objects, function(i,item){
@@ -203,7 +203,7 @@ function pageList(loadPage) {
   var offset = loadPage * 20;
   var limit = {{PAGINATION_LIMIT}};
   // $.templates({ chainTemplate: "#chainTemplate" });
-  $.getJSON("http://localhost:8000/api/midichain/?format=json&offset="+offset+"&limit="+limit,
+  $.getJSON("http://musikov.twinhelix.org/api/midichain/?format=json&offset="+offset+"&limit="+limit,
 
     function(data) {
       $.each(data.objects, function(i,item){
@@ -240,6 +240,38 @@ $(document).ready(renderList());
 
       });
     </script>
+<script type="text/javascript">
+  var GoSquared = {};
+  GoSquared.acct = "GSN-246179-H";
+  (function(w){
+    function gs(){
+      w._gstc_lt = +new Date;
+      var d = document, g = d.createElement("script");
+      g.type = "text/javascript";
+      g.src = "//d1l6p2sc9645hc.cloudfront.net/tracker.js";
+      var s = d.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(g, s);
+    }
+    w.addEventListener ?
+      w.addEventListener("load", gs, false) :
+      w.attachEvent("onload", gs);
+  })(window);
+</script>
+
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-35746917-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
 
 <script type="text/javascript">
 
