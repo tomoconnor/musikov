@@ -56,7 +56,11 @@ def index(request):
 	else:
 		form = UploadForm() # A empty, unbound form
 		mf = MidiChain.objects.order_by('-rank','-pk')
-		return render_to_response('main.html',{'chains':mf,'form':form},context_instance=RequestContext(request))
+		return render_to_response('js.html',{'chains':mf,'form':form},context_instance=RequestContext(request))
+
+def api_list(request):
+	mf = MidiChain.objects.order_by('-rank','-pk')
+	return render_to_response('list.json',{'chains':mf,'form':form},context_instance=RequestContext(request))
 
 def urlsubmit(request):
 	if request.method == 'POST':

@@ -65,7 +65,7 @@
 
 
 
-{% for chain in chains %}
+<!-- {% for chain in chains %}
           <li class="well" id="{{chain.id}}">
             <div class="btn-group btn-group-vertical">
               <a class="btn-success btn" href="/vote/up/{{chain.id}}"><i class="icon-arrow-up"></i></a>
@@ -79,7 +79,7 @@
             <p><a href="{{MEDIA_URL}}graphs/{{chain.dotFile|basename}}">dotFile</a></p>
           </li>
           <li class="divider"></li>
-        {% endfor %} 
+        {% endfor %}  -->
   
         </ul>
 
@@ -139,14 +139,80 @@
     <script src="http://js.pusher.com/1.12/pusher.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
-    <script type="text/javascript">
+    <script src="https://raw.github.com/BorisMoore/jsrender/master/jsrender.js"></script>
+    
+  <script type="text/javascript">
+    $.views.helpers({
+
+      basename: function( val) {
+        var ret;
+        return val.replace(/.*\//, "" );
+        
+      }
+    });
+  </script>
+
+{% verbatim %}
+<script id="chainTemplate" type="text/x-jsrender">
+          <li class="well" id="{{>id}}">
+            <div class="btn-group btn-group-vertical">
+              <a class="btn-success btn" href="/vote/up/{{>id}}"><i class="icon-arrow-up"></i></a>
+              <a class="btn-danger btn" href="/vote/down/{{>id}}"><i class="icon-arrow-down"></i></a>
+            </div>
+            
+
+            <p class="lead">{{>fileName}}</p>
+            <p><a href="http://localhost:8000/media/graphs/{{>~basename(pngFile)}}">PNG Graph</a></p>
+            <p><a href="http://localhost:8000/media/graphs/{{>~basename(svgFile)}}">SVG Graph</a></p>
+            <p><a href="http://localhost:8000/media/graphs/{{>~basename(dotFile)}}">dotFile</a></p>
+
+          </li>
+          <li class="divider"></li>
+</script>
+{% endverbatim %}
+<script type="text/javascript">
+
+
+</script>
+
+<script>
+function renderList() {
+  $("#pregen").empty();
+  $.templates({ chainTemplate: "#chainTemplate" });
+  $.getJSON("http://localhost:8000/api/midichain/?format=json",
+
+    function(data) {
+      $.each(data.objects, function(i,item){
+        var html = $.render.chainTemplate( item );
+
+        $("#pregen").append(html);
+       // $( "#chainTemplate" ).render( item ).appendTo("#pregen");
+        // $("<img/>").attr("src", item.media.m).appendTo("#images");
+        if ( i == 3 ) return false;
+      });
+    });
+
+};
+$(document).ready(renderList());
+
+
       var pusher = new Pusher('4ce3bc725e312e2fcc43'); // Replace with your app key
-      var channel = pusher.subscribe('queue_updates');
-      channel.bind('queue_added', function(data) {
+      var channel_queue = pusher.subscribe('queue_updates');
+      var list_queue = pusher.subscribe('list_updates');
+
+      channel_queue.bind('queue_added', function(data) {
+
         alert('An event was triggered with message: ' + data.message);
+
+      });
+
+      list_queue.bind('list_added', function(data) {
+
+        alert('An event was triggered with message: ' + data.message);
+        renderList();
+
       });
     </script>
-
 
 
   </body>

@@ -2,11 +2,15 @@ from django.conf.urls import patterns, include, url
 from musikovweb.views import *
 from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls.defaults import *
+from musikovweb.api import MidiChainResource
 
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+midichain_resource = MidiChainResource()
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -21,6 +25,7 @@ urlpatterns = patterns('',
     (r'^$', index),
     (r'vote/(?P<dir>(up|down))/(?P<id>(\d+))',vote),
     (r'urlsubmit/',urlsubmit),
-    
+    (r'^api/', include(midichain_resource.urls)),
+
 	
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

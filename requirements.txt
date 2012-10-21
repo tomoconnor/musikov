@@ -2,5 +2,6 @@ music21
 nose
 pygraphviz
 django==1.4.2
+django-tastypie==0.9.11
 psycopg2==2.4.5
 south==0.7.6

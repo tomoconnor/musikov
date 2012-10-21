@@ -1,0 +1,17 @@
+<script id="chainTemplate" type="text/x-jsrender">
+          <li class="well" id="{{id}}">
+            <div class="btn-group btn-group-vertical">
+              <a class="btn-success btn" href="/vote/up/{{id}}"><i class="icon-arrow-up"></i></a>
+              <a class="btn-danger btn" href="/vote/down/{{id}}"><i class="icon-arrow-down"></i></a>
+            </div>
+            
+
+            <p class="lead">{{chain}}</p>
+            <p><a href="http://localhost:8000/media/graphs/{{>~basename(pngFile)}}">PNG Graph</a></p>
+            <p><a href="http://localhost:8000/media/graphs/{{>~basename(svgFile)}}">SVG Graph</a></p>
+            <p><a href="http://localhost:8000/media/graphs/{{>~basename(dotFile)}}">dotFile</a></p>
+
+          </li>
+          <li class="divider"></li>
+</script>
+
