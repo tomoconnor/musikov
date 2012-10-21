@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/home/ubuntu/musikov/bin/python
+
+#### /usr/bin/env python
 import os
 import sys
 
