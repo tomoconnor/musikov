@@ -39,7 +39,8 @@
           <a class="brand" href="#">Musikov</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li><a href="/">Home</a></li>
+              <li class="active"><a href="/">Home</a></li>
+              <li><a href="#" onClick="$('#myModal').modal('show');">About?!</a></li>
               <!-- <li><a href="/generate">Generate</a></li> -->
             </ul>
 
@@ -284,5 +285,23 @@ $('#id_userFile').change(function(){
 });
 
 </script>
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="$('#myModal').remove()">×</button>
+    <h3 id="myModalLabel">What's this all about?</h3>
+  </div>
+  <div class="modal-body">
+    <p>I've been playing with Musical Markov Chains. This is what i've made. </p>
+<p>It takes a midi file (you upload it), and creates a markov chain represented as a directed graph.</p>
+<p>Things it doesn't do very well: polyphony, chords (this will be in the next release), the processing queue representation is weird. I'll fix that one day. Maybe. 
+</p>
+<p>
+Inspired by http://xkcd.com/851/, http://news.ycombinator.com/item?id=4671687 and Bioinformatics, in a rather roundabout way.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true" onClick="$('#myModal').remove()">Close</button>
+  </div>
+</div>
   </body>
 </html>
