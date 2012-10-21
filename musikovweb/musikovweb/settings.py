@@ -1,4 +1,7 @@
 # Django settings for musikovweb project.
+import djcelery
+djcelery.setup_loader()
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -121,6 +124,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'tastypie',
+    'djcelery',
     'musikovweb',
 )
 
@@ -152,3 +156,5 @@ LOGGING = {
         },
     }
 }
+
+BROKER_URL = 'amqp://guest:guest@localhost:5672/'

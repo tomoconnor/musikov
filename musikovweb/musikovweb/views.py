@@ -13,9 +13,22 @@ from musikovweb.forms import *
 from musikovweb.musikov_class import MusikovSong
 import logging
 
+
+from celery import task
+from celerytest.tasks import add
+from celery.signals import task_sent
+
+
 logger = logging.getLogger(__name__)
 
 
+@task_sent.connect
+def task_sent_handler(sender=None, task_id=None, task=None, args=None,
+                      kwargs=None, \*\*kwds):
+    print('Got signal task_sent for task id %s' % (task_id, ))
+
+
+@task()
 def process(upload_id):
 
 	def cb(ms):
@@ -50,7 +63,9 @@ def index(request):
 		if form.is_valid():
 			newfile = UploadedFile(uploadfile = request.FILES[u'userFile'])
 			newfile.save()
-			process(newfile.id)
+
+			process.delay(newfile.id)
+			#process(newfile.id)
 			# Redirect to the document list after POST
 			return HttpResponseRedirect(reverse('musikovweb.views.index'))
 	else:
