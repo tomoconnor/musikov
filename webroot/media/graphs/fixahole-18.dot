@@ -1,0 +1,7 @@
+strict graph {
+	graph [bb="0,0,0,0"];
+	node [label="\N"];
+	edge [arrowtype=normal,
+		dir=forward
+	];
+}
